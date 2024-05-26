@@ -35,6 +35,7 @@ const loginform = () => {
   });
 
   const onSubmit = async (data) => {
+    console.log('Submitting login form with data:', data); // Log the data being sent
     try {
       const response = await fetch('http://127.0.0.1:8000/api/auth/login', {
         method: 'POST',
@@ -47,9 +48,9 @@ const loginform = () => {
         throw new Error('Network response was not ok');
       }
       const result = await response.json();
-      console.log('Login successful:', result);
+      console.log('Login successful:', result); // Log the successful response
     } catch (error) {
-      console.error('Login failed:', error);
+      console.error('Login failed:', error); // Log any errors
     }
   };
 
