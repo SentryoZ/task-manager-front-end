@@ -24,6 +24,8 @@ import {
 import { useForm } from "react-hook-form";
 import { LoginSchema } from "@/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import {sendUnauthenticatedRequest} from "@/lib/http";
+import {Auth} from "@/model/auth";
 
 const loginform = () => {
   const form = useForm({
@@ -37,18 +39,11 @@ const loginform = () => {
   const onSubmit = async (data) => {
     console.log('Submitting login form with data:', data); // Log the data being sent
     try {
-      const response = await fetch('http://127.0.0.1:8000/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      const result = await response.json();
+      const result = await sendUnauthenticatedRequest('POST', 'http://127.0.0.1:8000/api/auth/login', data)
       console.log('Login successful:', result); // Log the successful response
+
+      // Save to local storage
+      localStorage.setItem('access_token', result.token)
     } catch (error) {
       console.error('Login failed:', error); // Log any errors
     }
@@ -82,7 +77,7 @@ const loginform = () => {
                   </FormControl>
                   <FormMessage />
                 </FormItem>
-                
+
               )}
             />
             <FormField
@@ -95,7 +90,7 @@ const loginform = () => {
                   </FormControl>
                   <FormMessage />
                 </FormItem>
-                
+
               )}
             />
             <Button className="w-full ">Login</Button>
