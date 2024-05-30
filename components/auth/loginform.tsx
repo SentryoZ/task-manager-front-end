@@ -25,7 +25,6 @@ import { useForm } from "react-hook-form";
 import { LoginSchema } from "@/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {sendUnauthenticatedRequest} from "@/lib/http";
-import {Auth} from "@/model/auth";
 
 const loginform = () => {
   const form = useForm({
