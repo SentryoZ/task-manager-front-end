@@ -3,7 +3,7 @@
 import React from "react";
 import LoginForm from "@/components/auth/loginform";
 
-const Loginpage = () => {
+const LoginPage = () => {
   return (
     <div className="flex flex-col w-full min-h-screen">
       <header className="p-5 text-center md:text-left">
@@ -16,4 +16,4 @@ const Loginpage = () => {
   );
 };
 
-export default Loginpage;
+export default LoginPage;

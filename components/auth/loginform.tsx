@@ -1,3 +1,4 @@
+
 "use client";
 
 import React from "react";
@@ -12,39 +13,38 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { useForm } from "react-hook-form";
-import { LoginSchema } from "@/schema";
-import { zodResolver } from "@hookform/resolvers/zod";
-import {sendUnauthenticatedRequest} from "@/lib/http";
+import { sendUnauthenticatedRequest } from "@/lib/http";
+import Link from "next/link";
+import { fetchCsrfToken } from "@/lib/http";
+import axios from "axios";
 
-const loginform = () => {
-  const form = useForm({
-    resolver: zodResolver(LoginSchema),
-    defaultValues: {
-      email: "",
-      password: "",
-    },
-  });
+const LoginForm = () => {
+  const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
 
-  const onSubmit = async (data) => {
-    console.log('Submitting login form with data:', data); // Log the data being sent
+  const onSubmit = async (e) => {
+    e.preventDefault(); // Prevent the default form submission behavior
+
+    const data = [email, password]; // Prepare the data to be sent
+    console.log("Submitting login form with data:", data); // Log the data being sent
+
     try {
-      const result = await sendUnauthenticatedRequest('POST', 'http://127.0.0.1:8000/api/auth/login', data)
-      console.log('Login successful:', result); // Log the successful response
+      // Fetch CSRF token first
+        const csrfToken = await fetchCsrfToken();
+        console.log("CSRF token:", csrfToken); // Log the CSRF token
+
+      // Send the login request
+      const result = await sendUnauthenticatedRequest(
+        "POST",
+        "http://127.0.0.1:8000/api/auth/login",
+        data
+      );
+      console.log("Login successful:", result); // Log the successful response
 
       // Save to local storage
-      localStorage.setItem('access_token', result.token)
+      localStorage.setItem("access_token", result.token);
     } catch (error) {
-      console.error('Login failed:', error); // Log any errors
+      console.error("Login failed:", error); // Log any errors
     }
   };
 
@@ -64,48 +64,48 @@ const loginform = () => {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-1">
-            <FormField
-              control={form.control}
+        <form className="space-y-2">
+          <div className="space-x-2">
+            <Input
+              id="email"
               name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Input placeholder="email@domain.com" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-
-              )}
+              type="text"
+              placeholder="email@domain.com"
+              value={email} // Bind value to state
+              onChange={(e) => {
+                setEmail(e.target.value); // Update state on change
+              }}
             />
-            <FormField
-              control={form.control}
+          </div>
+          <div className="space-y-2">
+            <Input
+              id="password"
               name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Input placeholder="password" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-
-              )}
+              type="password"
+              placeholder="password"
+              value={password} // Bind value to state
+              onChange={(e) => {
+                setPassword(e.target.value); // Update state on change
+              }}
             />
-            <Button className="w-full ">Login</Button>
-          </form>
-        </Form>
+          </div>
+          <div className="flex justify-center">
+            <Button type="submit" onClick={onSubmit} className="w-full">
+              Login
+            </Button>
+          </div>
+        </form>
       </CardContent>
       <CardFooter className="flex flex-col space-y-1.438">
-        <a
-          href="#"
+        <Link
+          href="/auth/resetpassword"
           className="text-sm text-blue-500 hover:text-blue-700 text-center"
         >
           Forgot password?
-        </a>
+        </Link>
       </CardFooter>
     </Card>
   );
 };
 
-export default loginform;
+export default LoginForm;
