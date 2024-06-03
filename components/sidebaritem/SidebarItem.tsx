@@ -11,37 +11,37 @@ import { FaUserGroup } from "react-icons/fa6";
 export const SidebarItems = [
   {
     title: "Home",
-    path: "/",
+    href: "/",
     icon: <FiHome size={24} />,
   },
   {
     title: "Projects",
-    path: "/projects",
+    href: "/projects",
     icon: <MdOutlineTableChart size={24} />,
   },
   {
     title: "Issues",
-    path: "/issues",
+    href: "/issues",
     icon: <MdOutlineFormatListNumbered size={24} />,
   },
   {
     title: "Setting",
-    path: "/settings",
+    href: "/settings",
     icon: <IoSettingsOutline size={24} />,
   },
   {
     title: "Team Manage",
-    path: "",
+    href: "",
     icon: null,
   },
   {
     title: "Members",
-    path: "/members",
+    href: "/members",
     icon: <FiUsers size={24} />,
   },
   {
     title: "Groups",
-    path: "/groups",
+    href: "/groups",
     icon: <FaUserGroup size={24} />,
   },
 ];
