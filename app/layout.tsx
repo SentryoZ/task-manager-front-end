@@ -1,10 +1,7 @@
-import type { Metadata } from "next";
-import { Content, Inter } from "next/font/google";
+import { Metadata } from "next";
+import { Inter } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/components/navbar/navbar";
-import Sidebar from "@/components/sidebar/sidebar";
-import ContentWrapper from "@/components/contentwrapper/contentwrapper";
-import PageWrapper from "@/components/pagewrapper/pagewrapper";
+import ClientLayout from "./clientlayout";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,14 +18,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className} suppressHydrationWarning={true}>
-        <div className="flex">
-          <Sidebar />
-
-          <PageWrapper>
-            <Navbar />
-            <ContentWrapper>{children}</ContentWrapper>
-          </PageWrapper>
-        </div>
+        <ClientLayout>{children}</ClientLayout>
       </body>
     </html>
   );
