@@ -1,29 +1,24 @@
 import axios from 'axios';
-import { url } from 'inspector';
 
-
-export interface HttpData {
-    status: number,
-    message: string,
-    data: Record<string, any>,
-    debugMessage: string|null
-}
-
-
+export const axiosInstance = axios.create({
+    baseURL: process.env.NEXT_PUBLIC_BASE_API_URL ?? "127.0.0.0:8000",
+    withCredentials: true,
+    withXSRFToken: true
+})
 
 export async function fetchCsrfToken() {
     const response = await fetch('');
     if (!response.ok) {
         throw new Error('Failed to fetch CSRF token');
     }
-    const responseData: HttpData = await response.json();
+    const responseData = await response.json();
     if (responseData.status != 200){
         throw new Error('Failed to fetch CSRF token');
     }
     return responseData.data;
 }
 
-export async function sendUnauthenticatedRequest(method: string, url: string | URL | Request, data: Array<any>){
+export async function sendUnauthenticatedRequest(method: string, url: string | URL | Request, data: object){
     const response =  await fetch(url, {
         method: method,
         headers: {
@@ -34,11 +29,11 @@ export async function sendUnauthenticatedRequest(method: string, url: string | U
     if (!response.ok) {
         throw new Error('Network response was not ok');
     }
-    const responseData: HttpData = await response.json()
+    const responseData = await response.json()
     return responseData.data;
 }
 
-export async function sendRequest(method: string, url: string | URL | Request, data: Array<any>) {
+export async function sendRequest(method: string, url: string | URL | Request, data: object) {
     const response = await fetch(url, {
         method: method,
         headers: {
@@ -50,7 +45,7 @@ export async function sendRequest(method: string, url: string | URL | Request, d
     if (!response.ok) {
         throw new Error('Network response was not ok');
     }
-    const responseData: HttpData = await response.json();
+    const responseData = await response.json();
     // Check if status is not 200
     if (responseData.status != 200){
         // Show alert with message
