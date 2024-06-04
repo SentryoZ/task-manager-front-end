@@ -1,8 +1,26 @@
+import axios from 'axios';
+import { url } from 'inspector';
+
+
 export interface HttpData {
     status: number,
     message: string,
     data: Record<string, any>,
     debugMessage: string|null
+}
+
+
+
+export async function fetchCsrfToken() {
+    const response = await fetch('');
+    if (!response.ok) {
+        throw new Error('Failed to fetch CSRF token');
+    }
+    const responseData: HttpData = await response.json();
+    if (responseData.status != 200){
+        throw new Error('Failed to fetch CSRF token');
+    }
+    return responseData.data;
 }
 
 export async function sendUnauthenticatedRequest(method: string, url: string | URL | Request, data: Array<any>){

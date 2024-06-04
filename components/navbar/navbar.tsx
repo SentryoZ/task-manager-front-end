@@ -1,29 +1,16 @@
+"use client";
 import React from "react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import { ChevronDownIcon } from "@radix-ui/react-icons";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuPortal,
-  DropdownMenuSeparator,
-  DropdownMenuShortcut,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { CiSearch } from "react-icons/ci";
 import { NavbarItem } from "../navbaritem/NavbarItem";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const Navbar = () => {
+  const path = usePathname();
   return (
-    <nav className="flex justify-between items-center p-5 bg-white text-black w-full max-h-[66px]  border-b ">
-      <div className="relative w-full max-w-sm items-center space-x-2 hidden sm:inline-flex">
+    <nav className="flex justify-between items-center p-5 bg-white text-black  h-[66px] border-b">
+      <div className="relative md:w-[295px] items-center space-x-2 hidden md:flex">
         <Input
           type="search"
           placeholder="Search..."
@@ -33,23 +20,16 @@ const Navbar = () => {
       </div>
       <div className="flex items-center ">
         {NavbarItem.map((item, index) => (
-          <div
-            key={index}
-            className={`flex items-center p-2 rounded-lg mr-3  ${
-              item.buttonStyle
-                ? " hover:bg-gray-200 transition-all duration-300 ease-in-out cursor-pointer"
-                : ""
-            }`}
-          >
-            {item.icon}
-            <p
-              className={`text-xs md:text-sm ${
-                item.title === "New Project" ? " cursor-pointer" : ""
+          <Link href={item.href} key={index}>
+            <div
+              className={`flex items-center p-2 rounded-lg mr-3  hover:bg-gray-200 transition-all duration-300 ease-in-out cursor-pointer border h-[42px] ${
+                item.href === path ? "bg-gray-200" : ""
               }`}
             >
-              {item.title}
-            </p>
-          </div>
+              {item.icon}
+              <p className="text-xs md:text-sm ">{item.title}</p>
+            </div>
+          </Link>
         ))}
       </div>
     </nav>

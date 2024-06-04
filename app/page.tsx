@@ -1,16 +1,8 @@
-import Navbar from "@/components/navbar/navbar";
-import Sidebar from "@/components/sidebar/sidebar";
-import React from "react";
-
-const HomePage = () => {
+"use client";
+export default function Home() {
   return (
-    <div className="flex">
-      <Sidebar />
-      <div className="flex-grow sm:ml-[64px] md:ml-[200px] lg:ml-[256px] w-full transition-all duration-300 ease-in-out">
-        <Navbar />
-      </div>
-    </div>
+    <>
+      <span className="font-bold text-4xl">Home</span>
+    </>
   );
-};
-
-export default HomePage;
+}

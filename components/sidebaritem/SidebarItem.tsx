@@ -1,47 +1,47 @@
+"use client";
 import React from "react";
-import { FiHome } from "react-icons/fi";
-import { FiUsers } from "react-icons/fi";
-import { MdOutlineTableChart } from "react-icons/md";
+import { FiHome, FiUsers } from "react-icons/fi";
+import {
+  MdOutlineTableChart,
+  MdOutlineFormatListNumbered,
+} from "react-icons/md";
 import { IoSettingsOutline } from "react-icons/io5";
-import { MdOutlineFormatListNumbered } from "react-icons/md";
-import { MdGroup } from "react-icons/md";
 import { FaUserGroup } from "react-icons/fa6";
-import { group } from "console";
 
-export const SidebarItem = [
+export const SidebarItems = [
   {
     title: "Home",
-    path: "/homepage",
+    href: "/",
     icon: <FiHome size={24} />,
   },
   {
     title: "Projects",
-    path: "/projects",
+    href: "/projects",
     icon: <MdOutlineTableChart size={24} />,
   },
   {
     title: "Issues",
-    path: "/issues",
+    href: "/issues",
     icon: <MdOutlineFormatListNumbered size={24} />,
   },
   {
     title: "Setting",
-    path: "/setting",
+    href: "/settings",
     icon: <IoSettingsOutline size={24} />,
   },
   {
     title: "Team Manage",
-    path: "",
-    icon: "",
+    href: "",
+    icon: null,
   },
   {
     title: "Members",
-    path: "/members",
+    href: "/members",
     icon: <FiUsers size={24} />,
   },
   {
     title: "Groups",
-    path: "/groups",
+    href: "/groups",
     icon: <FaUserGroup size={24} />,
   },
 ];
