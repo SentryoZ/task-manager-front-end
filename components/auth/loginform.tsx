@@ -1,4 +1,3 @@
-
 "use client";
 
 import React from "react";
@@ -16,7 +15,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { sendUnauthenticatedRequest } from "@/lib/http";
 import Link from "next/link";
 import { fetchCsrfToken } from "@/lib/http";
-import axios from "axios";
 
 const LoginForm = () => {
   const [email, setEmail] = React.useState("");
@@ -29,10 +27,6 @@ const LoginForm = () => {
     console.log("Submitting login form with data:", data); // Log the data being sent
 
     try {
-      // Fetch CSRF token first
-        const csrfToken = await fetchCsrfToken();
-        console.log("CSRF token:", csrfToken); // Log the CSRF token
-
       // Send the login request
       const result = await sendUnauthenticatedRequest(
         "POST",

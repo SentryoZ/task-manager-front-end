@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { url } from 'inspector';
-import { string } from 'zod';
+
 
 export interface HttpData {
     status: number,
@@ -12,14 +12,15 @@ export interface HttpData {
 
 
 export async function fetchCsrfToken() {
-    const api = axios.create({
-    baseURL: 'http://127.0.0.1:8000',
-    withCredentials: true,
-    });
-    const response = await api.get('/sanctum/csrf-cookie');
-    if (!response.data) {
-      throw new Error('Failed to fetch CSRF token');
+    const response = await fetch('');
+    if (!response.ok) {
+        throw new Error('Failed to fetch CSRF token');
     }
+    const responseData: HttpData = await response.json();
+    if (responseData.status != 200){
+        throw new Error('Failed to fetch CSRF token');
+    }
+    return responseData.data;
 }
 
 export async function sendUnauthenticatedRequest(method: string, url: string | URL | Request, data: Array<any>){
