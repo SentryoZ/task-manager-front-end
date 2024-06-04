@@ -13,10 +13,10 @@ export default function ClientLayout({
 }) {
   const pathname = usePathname();
 
-  const noLayoutRoutes = ["/auth/login", "/auth/resetpassword"];
+  const noLayoutRoutes = ["/auth/login", "/auth/resetpassword"];  // don't apply rootlayout to these routes
 
-  const useLayout = !noLayoutRoutes.includes(pathname);
-
+  const useLayout = !noLayoutRoutes.includes(pathname);    // only apply the layout if its not in noLayoutRoutes
+ 
   return useLayout ? (
     <div className="flex">
       <Sidebar />
