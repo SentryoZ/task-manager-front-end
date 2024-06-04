@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { FiHome, FiUsers } from "react-icons/fi";
+import {FiHome, FiLogOut, FiUsers} from "react-icons/fi";
 import {
   MdOutlineTableChart,
   MdOutlineFormatListNumbered,
@@ -43,5 +43,10 @@ export const SidebarItems = [
     title: "Groups",
     href: "/groups",
     icon: <FaUserGroup size={24} />,
+  },
+  {
+    title: "Log out",
+    href: "/auth/logout",
+    icon: <FiLogOut size={24}/>,
   },
 ];
