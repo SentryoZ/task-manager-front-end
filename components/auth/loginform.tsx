@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/card";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
-import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
+import {Avatar, AvatarImage} from "@/components/ui/avatar";
 import {axiosInstance, sendUnauthenticatedRequest} from "@/lib/http";
 import Link from "next/link";
 import {useRouter} from "next/navigation";
@@ -27,22 +27,18 @@ const LoginForm = () => {
 
         // Prepare the data to be sent
         const data = {email, password};
-        try {
-            axiosInstance.get('http://127.0.0.1:8000/sanctum/csrf-cookie').then(response => {
-                sendUnauthenticatedRequest(
-                    "POST",
-                    "http://127.0.0.1:8000/api/auth/login",
-                    data
-                ).then(function (result) {
-                    console.log(result)
-                    // Save to local storage and redirect to home page
-                    localStorage.setItem("access_token", result.token)
-                    router.push('/')
-                });
-            });
-        } catch (error) {
-            console.error("Login failed:", error); // Log any errors
-        }
+        axiosInstance.get('sanctum/csrf-cookie').then(async response => {
+            const result = await sendUnauthenticatedRequest(
+                "POST",
+                "api/auth/login",
+                data
+            )
+            if (result){
+                // Save to local storage and redirect to home page
+                localStorage.setItem("access_token", result.token)
+                router.push('/')
+            }
+        });
     };
 
     return (
