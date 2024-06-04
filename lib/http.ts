@@ -1,4 +1,6 @@
 import axios from 'axios';
+import {toast} from "@/components/ui/use-toast";
+import {useRouter} from "next/navigation";
 
 export const axiosInstance = axios.create({
     baseURL: process.env.NEXT_PUBLIC_BASE_API_URL ?? "127.0.0.0:8000",
@@ -6,50 +8,44 @@ export const axiosInstance = axios.create({
     withXSRFToken: true
 })
 
-export async function fetchCsrfToken() {
-    const response = await fetch('');
-    if (!response.ok) {
-        throw new Error('Failed to fetch CSRF token');
+export async function sendUnauthenticatedRequest(method: string, url: string, data: object) {
+    try {
+        const response = await axiosInstance.request({
+            method,
+            url,
+            data
+        })
+        return response.data
+    } catch (e: any) {
+        console.log(e)
+        toast({
+            variant: "destructive",
+            title: e.response.data.message
+        })
+        return null
     }
-    const responseData = await response.json();
-    if (responseData.status != 200){
-        throw new Error('Failed to fetch CSRF token');
-    }
-    return responseData.data;
+
 }
 
-export async function sendUnauthenticatedRequest(method: string, url: string | URL | Request, data: object){
-    const response =  await fetch(url, {
-        method: method,
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data),
-    });
-    if (!response.ok) {
-        throw new Error('Network response was not ok');
+export async function sendRequest(method: string, url: string, data: object) {
+    const router = useRouter()
+    try {
+        const response = await axiosInstance.request({
+            method,
+            url,
+            data
+        })
+        return response.data
+    } catch (e: any) {
+        // Redirect to login page if response have authenticated error
+        if (e.response.status === 401) {
+            router.push('auth/login')
+        } else {
+            toast({
+                variant: "destructive",
+                title: e.response.data.message
+            })
+            return null
+        }
     }
-    const responseData = await response.json()
-    return responseData.data;
-}
-
-export async function sendRequest(method: string, url: string | URL | Request, data: object) {
-    const response = await fetch(url, {
-        method: method,
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('access_token')}`
-        },
-        body: JSON.stringify(data),
-    });
-    if (!response.ok) {
-        throw new Error('Network response was not ok');
-    }
-    const responseData = await response.json();
-    // Check if status is not 200
-    if (responseData.status != 200){
-        // Show alert with message
-    }
-
-    return responseData;
 }
