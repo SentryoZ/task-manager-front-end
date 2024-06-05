@@ -1,29 +1,23 @@
 "use client";
 import React from "react";
-import { Input } from "@/components/ui/input";
-import { CiSearch } from "react-icons/ci";
-import { NavbarItem } from "../navbaritem/NavbarItem";
 import Link from "next/link";
+import { NavbarItem } from "../navbaritem/NavbarItem";
 import { usePathname } from "next/navigation";
+import SearchBar from "../searchbar/searchbar";
+import { ThemeToggle } from "../themetoggle/themetoggle";
 
 const Navbar = () => {
   const path = usePathname();
   return (
-    <nav className="flex justify-between items-center p-5 bg-white text-black  h-[66px] border-b">
-      <div className="relative md:w-[295px] items-center space-x-2 hidden md:flex">
-        <Input
-          type="search"
-          placeholder="Search..."
-          className="w-full rounded-lg bg-background pl-0.75"
-        />
-        <CiSearch className="absolute right-2 h-4 w-4 text-muted-foreground" />
-      </div>
-      <div className="flex items-center ">
+    <nav className="flex justify-between items-center p-5 text-black h-[66px] border-b dark:text-white ">
+      <SearchBar />
+      <div className="flex items-center space-x-3 ">
+        <ThemeToggle />
         {NavbarItem.map((item, index) => (
-          <Link href={item.href} key={index}>
+          <Link href={item.href} key={index} passHref>
             <div
-              className={`flex items-center p-2 rounded-lg mr-3  hover:bg-gray-200 transition-all duration-300 ease-in-out cursor-pointer border h-[42px] ${
-                item.href === path ? "bg-gray-200" : ""
+              className={`flex items-center p-2 rounded-lg hover:bg-gray-200 transition-all duration-300 ease-in-out cursor-pointer border h-[42px] dark:hover:bg-gray-600 ${
+                item.href === path ? "bg-gray-200 dark:bg-gray-600" : ""
               }`}
             >
               {item.icon}
