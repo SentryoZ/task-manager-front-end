@@ -3,7 +3,7 @@ import {toast} from "@/components/ui/use-toast";
 import {useRouter} from "next/navigation";
 
 export const axiosInstance = axios.create({
-    baseURL: process.env.NEXT_PUBLIC_BASE_API_URL ?? "127.0.0.0:8000",
+    baseURL: process.env.NEXT_PUBLIC_BASE_API_URL ?? "http://127.0.0.1:8000/",
     withCredentials: true,
     withXSRFToken: true
 })
