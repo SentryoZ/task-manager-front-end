@@ -33,7 +33,10 @@ export async function sendRequest(method: string, url: string, data: object) {
         const response = await axiosInstance.request({
             method,
             url,
-            data
+            data,
+            headers: {
+                'Authorization' : `Bearer` + localStorage.getItem('token')
+            }
         })
         return response.data
     } catch (e: any) {
