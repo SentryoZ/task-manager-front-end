@@ -1,15 +1,24 @@
 import axios from 'axios';
 import {toast} from "@/components/ui/use-toast";
-import {useRouter} from "next/navigation";
+import { useRouter } from "next/navigation";
 
 export const axiosInstance = axios.create({
     baseURL: process.env.NEXT_PUBLIC_BASE_API_URL ?? "127.0.0.0:8000",
     withCredentials: true,
     withXSRFToken: true,
-    headers: {
-        Authorization: `Bearer ` + localStorage.getItem('access_token')
-    }
 })
+
+axiosInstance.interceptors.request.use(function (config) { 
+    if (typeof window !== 'undefined') {
+        const token = localStorage.getItem('access_token');
+        if (token) {
+            config.headers.Authorization = `Bearer ` + token;
+        }
+    }
+    return config;
+}, function (error) {
+    return Promise.reject(error);
+});
 
 export async function sendUnauthenticatedRequest(method: string, url: string, data: object) {
     try {
@@ -17,9 +26,6 @@ export async function sendUnauthenticatedRequest(method: string, url: string, da
             method,
             url,
             data,
-            headers: {
-                'Authorization': `Bearer` + localStorage.getItem('access_token')
-            }
         })
         return response.data
     } catch (e: any) {

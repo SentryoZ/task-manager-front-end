@@ -5,6 +5,7 @@ import { NavbarItem } from "../navbaritem/NavbarItem";
 import { usePathname } from "next/navigation";
 import SearchBar from "../searchbar/searchbar";
 import { ThemeToggle } from "../themetoggle/themetoggle";
+import CreateProject from "../createproject/createproject";
 
 const Navbar = () => {
   const path = usePathname();
@@ -25,6 +26,7 @@ const Navbar = () => {
             </div>
           </Link>
         ))}
+        <CreateProject />
       </div>
     </nav>
   );
