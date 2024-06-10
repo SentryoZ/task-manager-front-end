@@ -1,7 +1,9 @@
 import React from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { axiosInstance } from "@/lib/http";
 import {
   Dialog,
   DialogContent,
@@ -20,18 +22,31 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useState } from "react";
+import Router from "next/router";
 
 const CreateProject = () => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [visibility, setVisibility] = useState("");
+  const [visibility, setVisibility] = useState();
   const [isOpen, setIsOpen] = useState(false);
+  const [status, setStatus] = useState();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setIsOpen(false);
     console.log("submitting form");
+    try {
+      const response = await axiosInstance.post("api/project", {
+        name,
+        description,
+        visibility: 1,
+        status: 1,
+      });
+
+      console.log(response);
+    } catch (error) {
+      console.error("Error creating project:", error);
+    }
   };
 
   const handleCancel = () => {
@@ -81,7 +96,7 @@ const CreateProject = () => {
                 <SelectContent>
                   <SelectGroup>
                     <SelectLabel>Visibility</SelectLabel>
-                    <SelectItem value="draft">Draft</SelectItem>
+                    <SelectItem value="0">Draft</SelectItem>
                     <SelectItem value="public">Public</SelectItem>
                     <SelectItem value="private">Private</SelectItem>
                   </SelectGroup>

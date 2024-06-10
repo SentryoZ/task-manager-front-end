@@ -1,4 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import DropDownButton from "@/components/dropdown/dropdown";
 import {
   ColumnDef,
   flexRender,
@@ -8,9 +11,6 @@ import {
   ColumnFiltersState,
   getFilteredRowModel,
 } from "@tanstack/react-table";
-import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import { useEffect } from "react";
 
 interface DataTableProps<TData> {
   data: TData[];
@@ -48,9 +48,7 @@ export default function DataTable<TData>({
       header: "",
       cell: () => (
         <div className="text-right pr-4">
-          <Button variant="outline" size="sm">
-            ...
-          </Button>
+          <DropDownButton />
         </div>
       ),
     },
