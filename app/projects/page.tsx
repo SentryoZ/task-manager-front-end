@@ -1,12 +1,9 @@
 "use client";
 import React from "react";
 import { useEffect, useState } from "react";
-import SearchBar from "@/components/searchbar/searchbar";
-import {
-  axiosInstance,
-  sendRequest,
-  sendUnauthenticatedRequest,
-} from "@/lib/http";
+import { axiosInstance } from "@/lib/http";
+import DataTable from "@/app/projects/data-table";
+import { Input } from "@/components/ui/input";
 
 interface Project {
   id: number;
@@ -19,6 +16,7 @@ interface Project {
 
 const ProjectsPage = () => {
   const [projects, setProjects] = useState<Project[]>([]);
+  const [filter, setFilter] = useState("");
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -35,34 +33,22 @@ const ProjectsPage = () => {
         console.error("Error fetching projects:", error);
       }
     };
-
     fetchProjects();
   }, []);
 
   return (
-    <div className="w-full h-full p-4 flex flex-col">
+    <div className="flex flex-col w-full h-full p-4 overflow-hidden">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-bold">Projects</h1>
-        <SearchBar />
+        <Input
+          placeholder="Filter projects..."
+          value={filter}
+          onChange={(e) => setFilter(e.target.value)} // update filter state on input change, data table will re-render with new filter value
+          className="max-w-xs"
+        />
       </div>
-      <div className="flex-1 w-full border p-4 overflow-y-auto">
-        <div className="grid gap-4">
-          {projects.map((project) => (
-            <div key={project.id} className="p-4 border-b">
-              <h2 className="text-xl font-semibold">{project.name}</h2>
-              <p>{project.description}</p>
-              <p>
-                <b>Short Description:</b> {project.short_description}
-              </p>
-              <p>
-                <b>Status:</b> {project.status}
-              </p>
-              <p>
-                <b>Visibility:</b> {project.visibility}
-              </p>
-            </div>
-          ))}
-        </div>
+      <div className="flex-1 overflow-hidden md:overflow-auto border rounded">
+        <DataTable data={projects} filter={filter} />
       </div>
     </div>
   );
