@@ -15,11 +15,13 @@ import {
 interface DataTableProps<TData> {
   data: TData[];
   filter: string;
+  fetchData: () => void; // fetch data function
 }
 
 export default function DataTable<TData>({
   data,
   filter,
+  fetchData,
 }: DataTableProps<TData>) {
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -46,9 +48,12 @@ export default function DataTable<TData>({
     {
       id: "actions",
       header: "",
-      cell: () => (
+      cell: (info) => (
         <div className="text-right pr-4">
-          <DropDownButton />
+          <DropDownButton
+            projectId={info.row.original.id}
+            fetchData={fetchData} // after changes, fetch data
+          />
         </div>
       ),
     },

@@ -18,22 +18,23 @@ const ProjectsPage = () => {
   const [projects, setProjects] = useState<Project[]>([]);
   const [filter, setFilter] = useState("");
 
-  useEffect(() => {
-    const fetchProjects = async () => {
-      try {
-        const response = await axiosInstance.get("api/project");
-        const data = response.data;
-        console.log(data);
-        if (data) {
-          setProjects(data.data);
-        } else {
-          throw new Error("Failed to fetch projects.");
-        }
-      } catch (error) {
-        console.error("Error fetching projects:", error);
+  const fetchProject = async () => {
+    try {
+      const response = await axiosInstance.get("api/project");
+      const data = response.data;
+      console.log(data);
+      if (data) {
+        setProjects(data.data);
+      } else {
+        throw new Error("Failed to fetch projects.");
       }
-    };
-    fetchProjects();
+    } catch (error) {
+      console.error("Error fetching projects:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchProject();
   }, []);
 
   return (
@@ -48,10 +49,10 @@ const ProjectsPage = () => {
         />
       </div>
       <div className="flex-1 overflow-hidden md:overflow-auto border rounded">
-        <DataTable data={projects} filter={filter} />
+        <DataTable data={projects} filter={filter} fetchData={fetchProject} />
       </div>
     </div>
   );
-};
+}; // fetchProject is passed as a prop to data-table
 
 export default ProjectsPage;
