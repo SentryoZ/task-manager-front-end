@@ -31,7 +31,7 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
 
   return (
     <div
-      className={`h-screen flex-col fixed border-r  md:flex dark:text-white p-4 transition-all ease-in-out ${
+      className={`h-screen flex-col fixed border-r md:flex dark:text-white p-4 transition duration-700 delay-1000 ease-in-out ${
         isSidebarOpen ? "w-[240px]" : "w-15"
       }`}
     >
