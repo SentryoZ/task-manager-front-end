@@ -23,13 +23,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-
 const AddMember = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [role, setRole] = useState<number | undefined>(undefined);
+  const [role, setRole] = useState("");
   const [status, setStatus] = useState(1);
   const [isOpen, setIsOpen] = useState(false);
+  const [avatar, setAvatar] = useState<File | null>(null);
 
   const [first_name, setFirstName] = useState("");
   const [last_name, setLastName] = useState("");
@@ -38,24 +38,38 @@ const AddMember = () => {
     setName(`${first_name} ${last_name}`);
   }, [first_name, last_name]);
 
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    setAvatar(file);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsOpen(false);
     console.log("submitting form");
 
+    const formData = new FormData();
+    formData.append('name', name);
+    formData.append('email', email);
+    formData.append('role_id', role);
+    formData.append('status', status.toString());
+    if (avatar) {
+      formData.append('avatar', avatar);
+    }
+
     try {
-      const response = await axiosInstance.post("api/user", {
-        name,
-        email,
-        role_id: role,
-        status,
+      const response = await axiosInstance.post("api/user", formData ,{
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
       });
-        console.log("Member created:", response.data);
+      
+      console.log("Avatar:", avatar);
+      console.log("Member created:", response.data);
     } catch (error) {
       console.error("Error creating project:", error);
     }
   };
-
 
   const handleCancel = () => {
     setIsOpen(false);
@@ -108,8 +122,8 @@ const AddMember = () => {
             <div className="flex flex-col space-y-1.5">
               <Label htmlFor="role">Role</Label>
               <Select
-                value={role?.toString()}
-                onValueChange={(newValue) => setRole(Number(newValue))}
+                value={role}
+                onValueChange={(newValue) => setRole(newValue)}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="" />
@@ -142,6 +156,10 @@ const AddMember = () => {
                   </SelectGroup>
                 </SelectContent>
               </Select>
+            </div>
+            <div className="flex flex-col space-y-1.5">
+              <Label htmlFor="profileImage">Profile Image</Label>
+              <Input id="avatar" type="file" onChange={handleImageChange} />
             </div>
             <DialogFooter className="flex">
               <Button type="submit" onClick={handleSubmit}>

@@ -3,31 +3,19 @@ import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuPortal,
-  DropdownMenuSeparator,
-  DropdownMenuShortcut,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { MdOutlineDelete } from "react-icons/md";
 import { CiEdit } from "react-icons/ci";
 import { axiosInstance } from "@/lib/http";
-import { useRouter } from "next/navigation";
 
-const DropDownButton = ({ projectId, fetchData }) => {
-  // take projectId as props from data-table.tsx
-
+const DropDownButton = ({ type, id, fetchData  }) => {
   const onDelete = async () => {
     try {
-      console.log("Deleting project with id:", projectId);
-      const response = await axiosInstance.delete(`api/project/${projectId}`); // take projectId from props
+      const response = await axiosInstance.delete(`api/${type}/${id}`);
       console.log("Delete successful", response.data);
-      fetchData(); // fetch data after delete
+      fetchData();
     } catch (error) {
       console.error(error);
     }

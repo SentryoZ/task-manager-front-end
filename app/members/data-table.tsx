@@ -1,5 +1,5 @@
 "use client";
-import React, { use } from "react";
+import React, { useState } from "react";
 import {
   ColumnDef,
   flexRender,
@@ -17,23 +17,81 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useState } from "react";
-import { useEffect } from "react";
+import DropDownButton from "@/components/dropdown/dropdown";
+
+export interface User {
+  id: number;
+  name: string;
+  email: string | null; // 'email' can be null
+  status: number;
+  role: number;
+}
+
 
 interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
   data: TData[];
   filter: string;
+  fetchData: () => void;
 }
 
 export function DataTable<TData, TValue>({
-  columns,
   data,
   filter,
+  fetchData,
 }: DataTableProps<TData, TValue>) {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
-  useEffect(() => {}, [filter]);
+  const columns: ColumnDef<TData>[] = [
+    {
+      accessorKey: "avatar",
+      header: "Avatar",
+      cell: (info) => (
+        <img
+          src={info.getValue() as string}
+          alt="avatar"
+          style={{
+            width: 50,
+            height: 50,
+            borderRadius: "50%",
+            objectFit: "cover",
+          }}
+        />
+      ),
+    },
+    {
+      accessorKey: "id",
+      header: "ID",
+    },
+    {
+      accessorKey: "name",
+      header: "Name",
+    },
+    {
+      accessorKey: "email",
+      header: "Email",
+    },
+    {
+      accessorKey: "status",
+      header: "Status",
+    },
+    {
+      accessorKey: "role_name",
+      header: "Role",
+    },
+    {
+      id: "actions",
+      header: "",
+      cell: (info) => (
+        <div className="text-right pr-4">
+          <DropDownButton
+            type="user"
+            id={info.row.original.id}
+            fetchData={fetchData}
+          />
+        </div>
+      ),
+    },
+  ];
 
   const table = useReactTable({
     data,
@@ -41,8 +99,8 @@ export function DataTable<TData, TValue>({
     getCoreRowModel: getCoreRowModel(),
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
-
     state: {
+      globalFilter: filter,
       columnFilters,
     },
   });

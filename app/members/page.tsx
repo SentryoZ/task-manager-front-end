@@ -1,14 +1,15 @@
 "use client";
 import React from "react";
 import { DataTable } from "./data-table";
-import { columns } from "./columns";
+
 import { useState, useEffect } from "react";
 import { axiosInstance } from "@/lib/http";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+
 import AddMember from "@/components/addmember/addmember";
 
 interface User {
+  avatar: string;
   id: number;
   name: string;
   email: string | null; // 'email' can be null
@@ -39,9 +40,6 @@ const MembersPage = () => {
     fetchMembers();
   }, []);
 
-  const addMember = async () => {
-    await fetchMembers();
-  };
 
   return (
     <div className="flex flex-col h-full w-full p-4 space-y-2">
@@ -58,7 +56,7 @@ const MembersPage = () => {
         </div>
       </div>
 
-      <DataTable columns={columns} filter={filter} data={users} />
+      <DataTable  filter={filter} data={users} fetchData={fetchMembers}/>
     </div>
   );
 };

@@ -51,8 +51,9 @@ export default function DataTable<TData>({
       cell: (info) => (
         <div className="text-right pr-4">
           <DropDownButton
-            projectId={info.row.original.id}
-            fetchData={fetchData} // after changes, fetch data
+            type="project"
+            id={info.row.original.id}
+            fetchData={fetchData}
           />
         </div>
       ),
