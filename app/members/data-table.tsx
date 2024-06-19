@@ -28,13 +28,13 @@ export interface User {
 }
 
 
-interface DataTableProps<TData, TValue> {
+interface DataTableProps<TData extends {id : any}, TValue> {
   data: TData[];
   filter: string;
   fetchData: () => void;
 }
 
-export function DataTable<TData, TValue>({
+export function DataTable<TData extends { id: any }, TValue>({
   data,
   filter,
   fetchData,
