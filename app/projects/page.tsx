@@ -21,10 +21,9 @@ const ProjectsPage = () => {
   const fetchProject = async () => {
     try {
       const response = await axiosInstance.get("api/project");
-      const data = response.data;
-      console.log(data);
-      if (data) {
-        setProjects(data.data);
+
+      if (response) {
+        setProjects(response.data.data);
       } else {
         throw new Error("Failed to fetch projects.");
       }
