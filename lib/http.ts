@@ -5,7 +5,10 @@ import {useRouter} from "next/navigation";
 export const axiosInstance = axios.create({
     baseURL: process.env.NEXT_PUBLIC_BASE_API_URL ?? "http://127.0.0.1:8000/",
     withCredentials: true,
-    withXSRFToken: true
+    withXSRFToken: true,
+    headers: {
+        Authorization: `Bearer ` + localStorage.getItem('access_token')
+    }
 })
 
 export async function sendUnauthenticatedRequest(method: string, url: string, data: object) {
@@ -13,7 +16,10 @@ export async function sendUnauthenticatedRequest(method: string, url: string, da
         const response = await axiosInstance.request({
             method,
             url,
-            data
+            data,
+            headers: {
+                'Authorization': `Bearer` + localStorage.getItem('access_token')
+            }
         })
         return response.data
     } catch (e: any) {
