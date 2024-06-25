@@ -5,13 +5,14 @@ import { NavbarItem } from "../navbaritem/NavbarItem";
 import { usePathname } from "next/navigation";
 import SearchBar from "../searchbar/searchbar";
 import { ThemeToggle } from "../themetoggle/themetoggle";
+import CreateProject from "../createproject/createproject";
 
 const Navbar = () => {
   const path = usePathname();
+
   return (
-    <nav className="flex justify-between items-center p-5 text-black h-[66px] border-b dark:text-white ">
-      <SearchBar />
-      <div className="flex items-center space-x-3 ">
+    <nav className="flex p-5 text-black h-[66px] border-b dark:text-white justify-end">
+      <div className="flex items-center space-x-3">
         <ThemeToggle />
         {NavbarItem.map((item, index) => (
           <Link href={item.href} key={index} passHref>
@@ -25,6 +26,7 @@ const Navbar = () => {
             </div>
           </Link>
         ))}
+        <CreateProject />
       </div>
     </nav>
   );

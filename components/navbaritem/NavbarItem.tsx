@@ -1,5 +1,5 @@
 import React from "react";
-import { FiCalendar, FiBell, FiPlus, FiMoreHorizontal } from "react-icons/fi";
+import { FiCalendar, FiBell } from "react-icons/fi";
 
 export const NavbarItem = [
   {
@@ -12,11 +12,6 @@ export const NavbarItem = [
     title: "",
     href: "/notifications",
     icon: <FiBell size={24} />,
-    buttonStyle: true,
-  },
-  {
-    title: "New Project",
-    href: "/newproject",
     buttonStyle: true,
   },
 ];

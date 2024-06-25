@@ -3,8 +3,8 @@ import { usePathname, redirect } from "next/navigation";
 
 export const AuthChecker = () => {
   const path = usePathname();
-  const [useAuthLayout, setUseAuthLayout] = useState(true);
-  const authRoutesRegex = new RegExp("^/auth/(login|logout)$");
+  const [useAuthLayout, setUseAuthLayout] = useState(false);
+  const authRoutesRegex = new RegExp("/auth/(login|logout)");
 
   useEffect(() => {
     const accessToken = localStorage.getItem("access_token");

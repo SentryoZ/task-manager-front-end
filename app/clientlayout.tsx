@@ -8,6 +8,7 @@ import ContentWrapper from "@/components/contentwrapper/contentwrapper";
 import PageWrapper from "@/components/pagewrapper/pagewrapper";
 import { ThemeProvider } from "@/components/theme-provider/themeprovider";
 import { AuthChecker } from "@/components/authchecker/authchecker";
+import { useState } from "react";
 
 export default function ClientLayout({
   children,
@@ -15,12 +16,16 @@ export default function ClientLayout({
   children: React.ReactNode;
 }) {
   const useAuthLayout = AuthChecker();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true); // default is true
 
   return useAuthLayout ? (
     <div className="flex">
       <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-        <Sidebar />
-        <PageWrapper>
+        <Sidebar
+          isSidebarOpen={isSidebarOpen} // pass isSidebarOpen state
+          setIsSidebarOpen={setIsSidebarOpen} // pass setIsSidebarOpen function
+        />
+        <PageWrapper isSidebarOpen={isSidebarOpen}>
           <Navbar />
           <ContentWrapper>{children}</ContentWrapper>
         </PageWrapper>
