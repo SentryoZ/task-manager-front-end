@@ -27,7 +27,7 @@ import {
 const MemberEditForm = ({ open, setOpen, fetchData, type, id }) => {
   const [userInformation, setUserInformation] = useState({} as any);
   const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(""); 
   const [role, setRole] = useState(""); // This will hold the role ID
   const [roleName, setRoleName] = useState("Select Role");
   const [status, setStatus] = useState<number | undefined>(undefined);

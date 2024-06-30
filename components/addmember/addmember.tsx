@@ -22,16 +22,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { UserModel } from "@/model/userModel";
 
 const AddMember = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [role, setRole] = useState("Select Role");
-  const [status, setStatus] = useState(1);
+  const [role, setRole] = useState<number>();
+  const [status, setStatus] = useState<number>();
   const [isOpen, setIsOpen] = useState(false);
-  const [avatar, setAvatar] = useState<File | null>(null);
+  const [avatar, setAvatar] = useState<File>();
   const [roles, setRoles] = useState([] as any);
-
   useEffect(() => {
     const fetchRoles = async () => {
       try {
@@ -49,34 +49,30 @@ const AddMember = () => {
     fetchRoles();
   }, []);
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    setAvatar(file);
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsOpen(false);
-    console.log("submitting form");
 
     const formData = new FormData();
     formData.append("name", name);
     formData.append("email", email);
-    formData.append("role_id", role);
-    formData.append("status", status.toString());
+    if (role !== undefined) formData.append("role_id", role.toString());
+    if (status !== undefined) formData.append("status", status.toString());
     if (avatar) {
       formData.append("avatar", avatar);
     }
 
     try {
-      const response = await axiosInstance.post("api/user", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const response = await UserModel.create(formData);
+      console.log("User created successfully", response);
+      console.log("Type of status", typeof status);
     } catch (error) {
-      console.error("Error creating project:", error);
+      console.error("Error creating user:", error);
     }
+  };
+
+  const handleFileChange = (e) => {
+    setAvatar(e.target.files[0]);
   };
 
   const handleCancel = () => {
@@ -98,7 +94,7 @@ const AddMember = () => {
         <form onSubmit={handleSubmit}>
           <div className="grid w-full items-center gap-4">
             <div className="flex flex-col gap-4">
-              <Label htmlFor="first_name">Name</Label>
+              <Label htmlFor="name">Name</Label>
               <Input
                 id="name"
                 placeholder="Enter their name..."
@@ -118,11 +114,16 @@ const AddMember = () => {
             <div className="flex flex-col gap-2">
               <Label htmlFor="role">Role</Label>
               <Select
-                value={role}
-                onValueChange={(newValue) => setRole(newValue)}
+                value={role?.toString()}
+                onValueChange={(newValue) => setRole(Number(newValue))}
               >
-                <SelectTrigger>{role}</SelectTrigger>
-
+                <SelectTrigger>
+                  <SelectValue placeholder="Select Role">
+                    {roles.length > 0 && role
+                      ? roles.find((r) => r.id === role)?.name
+                      : "Select Role"}
+                  </SelectValue>
+                </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
                     {roles.map((role) => (
@@ -141,7 +142,7 @@ const AddMember = () => {
                 onValueChange={(newValue) => setStatus(Number(newValue))}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="" />
+                  <SelectValue placeholder="Select Status" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
@@ -154,7 +155,7 @@ const AddMember = () => {
             </div>
             <div className="flex flex-col gap-2">
               <Label htmlFor="profileImage">Profile Image</Label>
-              <Input id="avatar" type="file" onChange={handleImageChange} />
+              <Input id="picture" type="file" onChange={handleFileChange} />
             </div>
             <DialogFooter className="flex">
               <Button type="submit" onClick={handleSubmit}>
