@@ -11,7 +11,7 @@ export default function PageWrapper({
 }: PageWrapperProps) {
   return (
     <div
-      className={`flex flex-grow flex-col h-screen w-full overflow-hidden transition-all  ease-in-out ${
+      className={`flex flex-grow flex-col h-screen w-full overflow-hidden transition-all duration-100 ease-in-out ${
         isSidebarOpen ? "ml-[240px]" : "ml-[70px]"
       }`}
     >

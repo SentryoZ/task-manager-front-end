@@ -11,11 +11,11 @@ const Navbar = () => {
   const path = usePathname();
 
   return (
-    <nav className="flex p-5 text-black h-[66px] border-b dark:text-white justify-end">
-      <div className="flex items-center space-x-3">
+    <nav className="flex p-5 text-black h-[66px] border-b dark:text-white ">
+      <div className="flex items-center space-x-3  ml-auto">
         <ThemeToggle />
         {NavbarItem.map((item, index) => (
-          <Link href={item.href} key={index} passHref>
+          <Link href={item.href} key={index}>
             <div
               className={`flex items-center p-2 rounded-lg hover:bg-gray-200 transition-all duration-300 ease-in-out cursor-pointer border h-[42px] dark:hover:bg-gray-600 ${
                 item.href === path ? "bg-gray-200 dark:bg-gray-600" : ""

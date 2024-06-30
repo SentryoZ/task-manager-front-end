@@ -22,12 +22,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import Router from "next/router";
+import { useRouter } from "next/navigation";
 
 const CreateProject = () => {
+  const router = useRouter();
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [visibility, setVisibility] = useState();
+  const [visibility, setVisibility] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const [status, setStatus] = useState();
 
@@ -42,6 +43,10 @@ const CreateProject = () => {
         visibility: 1,
         status: 1,
       });
+      if (response.status === 200) {
+        router.refresh();
+        router.push("./projects");
+      }
 
       console.log(response);
     } catch (error) {
