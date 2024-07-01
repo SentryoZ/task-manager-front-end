@@ -17,7 +17,7 @@ const Navbar = () => {
         {NavbarItem.map((item, index) => (
           <Link href={item.href} key={index}>
             <div
-              className={`flex items-center p-2 rounded-lg hover:bg-gray-200 transition-all duration-300 ease-in-out cursor-pointer border h-[42px] dark:hover:bg-gray-600 ${
+              className={`flex items-center p-2 rounded-lg hover:bg-gray-200 transition-all ease-in-out cursor-pointer border h-[42px] dark:hover:bg-gray-600 ${
                 item.href === path ? "bg-gray-200 dark:bg-gray-600" : ""
               }`}
             >

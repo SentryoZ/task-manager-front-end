@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { axiosInstance } from "@/lib/http";
 import DataTable from "@/app/projects/data-table";
 import { Input } from "@/components/ui/input";
+import { ProjectModel } from "@/model/projectModel";
 
 interface Project {
   id: number;
@@ -20,13 +21,8 @@ const ProjectsPage = () => {
 
   const fetchProject = async () => {
     try {
-      const response = await axiosInstance.get("api/project");
-
-      if (response) {
-        setProjects(response.data.data);
-      } else {
-        throw new Error("Failed to fetch projects.");
-      }
+      const response = await ProjectModel.get();
+      setProjects(response.data);
     } catch (error) {
       console.error("Error fetching projects:", error);
     }

@@ -13,7 +13,7 @@ interface User {
     avatar: string;
     id: number;
     name: string;
-    email: string | null; // 'email' can be null
+    email: string;
     status: number;
     role: number;
     created_at: string;

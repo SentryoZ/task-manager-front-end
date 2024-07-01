@@ -23,6 +23,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { UserModel } from "@/model/userModel";
+import { RoleModel } from "@/model/roleModel";
 
 const AddMember = () => {
   const [name, setName] = useState("");
@@ -35,12 +36,8 @@ const AddMember = () => {
   useEffect(() => {
     const fetchRoles = async () => {
       try {
-        const response = await axiosInstance.get("api/role");
-        if (response.data) {
-          setRoles(response.data.data);
-        } else {
-          throw new Error("Failed to fetch roles.");
-        }
+        const response = await RoleModel.get();
+        setRoles(response.data);
       } catch (error) {
         console.error("Error fetching roles:", error);
       }
@@ -64,8 +61,6 @@ const AddMember = () => {
 
     try {
       const response = await UserModel.create(formData);
-      console.log("User created successfully", response);
-      console.log("Type of status", typeof status);
     } catch (error) {
       console.error("Error creating user:", error);
     }

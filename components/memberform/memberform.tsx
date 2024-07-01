@@ -23,6 +23,7 @@ import {
   SelectValue,
   SelectLabel,
 } from "@/components/ui/select";
+import { RoleModel } from "@/model/roleModel";
 
 const MemberEditForm = ({ open, setOpen, fetchData, type, id }) => {
   const [userInformation, setUserInformation] = useState({} as any);
@@ -37,8 +38,8 @@ const MemberEditForm = ({ open, setOpen, fetchData, type, id }) => {
     const fetchUserData = async () => {
       const userResponse = await axiosInstance.get(`api/${type}/${id}`);
       setUserInformation(userResponse.data.data);
-      const roleResponse = await axiosInstance.get(`api/role`);
-      setRoles(roleResponse.data.data);
+      const roleResponse = await RoleModel.get();
+      setRoles(roleResponse.data);
     };
 
     if (open) {
@@ -59,7 +60,7 @@ const MemberEditForm = ({ open, setOpen, fetchData, type, id }) => {
       } else {
         setRole("Select Role");
       }
-      setStatus(userInformation.status_label);
+      setStatus(userInformation.status);
     }
   }, [userInformation, roles]);
 

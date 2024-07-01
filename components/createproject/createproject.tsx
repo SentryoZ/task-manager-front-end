@@ -23,6 +23,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useRouter } from "next/navigation";
+import { ProjectModel } from "@/model/projectModel";
 
 const CreateProject = () => {
   const router = useRouter();
@@ -37,7 +38,7 @@ const CreateProject = () => {
     setIsOpen(false);
     console.log("submitting form");
     try {
-      const response = await axiosInstance.post("api/project", {
+      const response = await ProjectModel.create({
         name,
         description,
         visibility: 1,

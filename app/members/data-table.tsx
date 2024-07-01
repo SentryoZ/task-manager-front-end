@@ -71,7 +71,7 @@ export function DataTable<TData extends { id: any }, TValue>({
       header: "Email",
     },
     {
-      accessorKey: "status",
+      accessorKey: "status_label",
       header: "Status",
     },
     {
