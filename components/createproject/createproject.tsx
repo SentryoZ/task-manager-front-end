@@ -22,12 +22,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import Router from "next/router";
+import { useRouter } from "next/navigation";
+import { ProjectModel } from "@/model/projectModel";
 
 const CreateProject = () => {
+  const router = useRouter();
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [visibility, setVisibility] = useState();
+  const [visibility, setVisibility] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const [status, setStatus] = useState();
 
@@ -36,12 +38,16 @@ const CreateProject = () => {
     setIsOpen(false);
     console.log("submitting form");
     try {
-      const response = await axiosInstance.post("api/project", {
+      const response = await ProjectModel.create({
         name,
         description,
         visibility: 1,
         status: 1,
       });
+      if (response.status === 200) {
+        router.refresh();
+        router.push("./projects");
+      }
 
       console.log(response);
     } catch (error) {

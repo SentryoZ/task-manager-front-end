@@ -30,6 +30,7 @@ export default function DataTable<TData>({
   useEffect(() => {
     // only use it when filter changes otherwise it will cause "Too many re-renders"
     setColumnFilters([{ id: "name-description", value: filter }]);
+    setPagination((prev) => ({ ...prev, pageIndex: 0 })); // reset on search
   }, [filter]);
 
   const columns: ColumnDef<any>[] = [
@@ -51,8 +52,9 @@ export default function DataTable<TData>({
       cell: (info) => (
         <div className="text-right pr-4">
           <DropDownButton
-            projectId={info.row.original.id}
-            fetchData={fetchData} // after changes, fetch data
+            type="project"
+            id={info.row.original.id}
+            fetchData={fetchData}
           />
         </div>
       ),
