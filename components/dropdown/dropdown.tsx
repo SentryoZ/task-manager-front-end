@@ -12,6 +12,7 @@ import { useState } from "react";
 import useOnDelete from "@/hooks/useOnDelete";
 import MemberEditForm from "../memberform/memberform";
 import ProjectEditForm from "../projectform/projectform";
+import GroupEditForm from "../groupform/groupform";
 
 const DropDownButton = ({ type, id, fetchData }) => {
   const [open, setOpen] = useState(false);
@@ -47,6 +48,14 @@ const DropDownButton = ({ type, id, fetchData }) => {
         />
       ) : type === "project" ? (
         <ProjectEditForm
+          open={open}
+          setOpen={setOpen}
+          fetchData={fetchData}
+          type={type}
+          id={id}
+        />
+      ) : type === "role" ? (
+        <GroupEditForm
           open={open}
           setOpen={setOpen}
           fetchData={fetchData}
