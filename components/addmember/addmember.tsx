@@ -48,7 +48,6 @@ const AddMember = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsOpen(false);
 
     const formData = new FormData();
     formData.append("name", name);
