@@ -7,6 +7,8 @@ import {
 } from "react-icons/md";
 import { IoSettingsOutline } from "react-icons/io5";
 import { FaUserGroup } from "react-icons/fa6";
+import { CgProfile } from "react-icons/cg";
+
 
 export const SidebarItems = [
   {
@@ -45,8 +47,8 @@ export const SidebarItems = [
     icon: <FaUserGroup size={24} />,
   },
   {
-    title: "Log out",
-    href: "/auth/logout",
-    icon: <FiLogOut size={24}/>,
-  },
+    title: "Your Profile",
+    href: "/profile",
+    icon: <CgProfile size={24} />,
+  }
 ];

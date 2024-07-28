@@ -20,6 +20,7 @@ import { RoleModel } from "@/model/roleModel";
 const AddRole = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [checkedPolicies, setCheckedPolicies] = useState({});
+  const [selectAll, setSelectAll] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     roleDescription: "",
@@ -45,6 +46,23 @@ const AddRole = () => {
       }
       return updatedState;
     });
+  };
+
+  const handleSelectAllChange = (event) => {
+    setSelectAll(event.target.checked);
+    if (!selectAll) {
+      let allPolicies = {};
+      [
+        ...Object.values(PolicyConstants.USER),
+        ...Object.values(PolicyConstants.PROJECT),
+        ...Object.values(PolicyConstants.ROLE),
+      ].forEach((policy) => {
+        allPolicies[policy] = true;
+      });
+      setCheckedPolicies(allPolicies);
+    } else {
+      setCheckedPolicies({});
+    }
   };
 
   const handleSubmit = async (event) => {
@@ -78,6 +96,7 @@ const AddRole = () => {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Add New Role</DialogTitle>
+          <DialogDescription>Click submit when you're done.</DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit}>
@@ -112,6 +131,17 @@ const AddRole = () => {
               <h2 className="font-semibold">
                 Permissions <span style={{ color: "red" }}>*</span>
               </h2>
+              <div>
+                  <h3 className="font-semibold">Select All</h3>
+                  <div className="flex gap-2">
+                    <input
+                      type="checkbox"
+                      checked={selectAll}
+                      onChange={handleSelectAllChange}
+                    />
+                    Select All
+                  </div>
+                </div>
               <div className="flex justify-between">
                 <div>
                   <h3 className="font-semibold">User Policies</h3>

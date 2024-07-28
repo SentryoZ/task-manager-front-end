@@ -3,9 +3,9 @@ import React from "react";
 import Link from "next/link";
 import { NavbarItem } from "../navbaritem/NavbarItem";
 import { usePathname } from "next/navigation";
-import SearchBar from "../searchbar/searchbar";
 import { ThemeToggle } from "../themetoggle/themetoggle";
 import CreateProject from "../createproject/createproject";
+import UserProfile from "../profile/UserProfile";
 
 const Navbar = () => {
   const path = usePathname();
@@ -13,7 +13,10 @@ const Navbar = () => {
   return (
     <nav className="flex p-5 text-black h-[66px] border-b dark:text-white ">
       <div className="flex items-center space-x-3  ml-auto">
-        <ThemeToggle />
+        <div>
+          <ThemeToggle />
+        </div>
+
         {NavbarItem.map((item, index) => (
           <Link href={item.href} key={index}>
             <div
@@ -27,6 +30,9 @@ const Navbar = () => {
           </Link>
         ))}
         <CreateProject />
+        <div>
+          <UserProfile />
+        </div>
       </div>
     </nav>
   );

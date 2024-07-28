@@ -4,6 +4,7 @@ import "./globals.css";
 import ClientLayout from "./clientlayout";
 import { Toaster } from "@/components/ui/toaster";
 import React from "react";
+import { UserProvider } from "@/useContext/UserContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,8 +21,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className} suppressHydrationWarning={true}>
-        <ClientLayout>{children}</ClientLayout>
-        <Toaster />
+        <UserProvider>
+          <ClientLayout>{children}</ClientLayout>
+          <Toaster />
+        </UserProvider>
       </body>
     </html>
   );

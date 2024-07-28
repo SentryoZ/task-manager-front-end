@@ -1,15 +1,22 @@
-"use client";
+// import { useRouter } from 'next/navigation';
+// import { DropdownMenuItem, DropdownMenuShortcut } from "@/components/ui/dropdown-menu"
 
-import {useEffect} from "react";
-import {useRouter} from "next/navigation";
+// const LogOutPage = () => {
+//   const router = useRouter();
 
-const LogoutPage = () => {
-    localStorage.removeItem('access_token')
-    const router = useRouter()
+//   // ... other code ...
 
-    useEffect(() => {
-        router.push('/auth/login')
-    });
-};
+//   const handleLogout = () => {
+//     localStorage.removeItem('access_token');
+//     router.push('/auth/login');
+//   };
 
-export default LogoutPage;
+//   return (
+//     // ... other code ...
+//     <DropdownMenuItem onSelect={handleLogout}>
+//       Log out
+//       <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
+//     </DropdownMenuItem>
+//     // ... other code ...
+//   );
+// };

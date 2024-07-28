@@ -34,6 +34,7 @@ const LoginForm = () => {
         data
       );
       if (result) {
+        localStorage.setItem("user", JSON.stringify(result.data.user));
         // Save to local storage and redirect to home page
         localStorage.setItem("access_token", result.data.token);
         router.push("/");
