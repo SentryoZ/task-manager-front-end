@@ -7,6 +7,7 @@ export type User = {
   name: string;
   email: string;
   avatar: string;
+  policies: string[];
 };
 
 type UserContextType = {

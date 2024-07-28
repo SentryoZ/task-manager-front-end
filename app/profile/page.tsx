@@ -11,93 +11,71 @@ import { useToast } from "@/components/ui/use-toast";
 import { ToastAction } from "@/components/ui/toast";
 import { axiosInstance } from "@/lib/http";
 import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import type { FieldValues } from "react-hook-form";
 
 const ProfilePage = () => {
   const { user, updateUser } = useUser();
   const [loadingProfile, setLoadingProfile] = useState(false);
   const [loadingPassword, setLoadingPassword] = useState(false);
-  const [localUser, setLocalUser] = useState(user);
-  const [oldPassword, setOldPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const { toast } = useToast();
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm();
+  const {
+    register: registerPassword,
+    handleSubmit: handleSubmitPassword,
+    formState: { errors: errorsPassword },
+    getValues,
+  } = useForm();
   const router = useRouter();
 
   useEffect(() => {
     if (user) {
-      setLocalUser(user);
+      setValue("name", user.name);
+      setValue("email", user.email);
     }
-  }, [user]);
+  }, [user, setValue]);
 
-  const handleSaveProfile = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSaveProfile = async (data: FieldValues) => {
     setLoadingProfile(true);
-    if (localUser) {
+    if (user) {
       try {
-        const response = await UserModel.patch(Number(localUser.id), localUser);
+        const response = await UserModel.patch(Number(user.id), {
+          ...user,
+          name: data.name,
+          email: data.email,
+        });
         if (response) {
           updateUser(response.data);
-          toast({
-            title: "Profile updated",
-            description: "Your profile has been updated successfully.",
-            duration: 2000,
-          });
+          alert("Profile updated successfully.");
         }
       } catch (error) {
-        toast({
-          variant: "destructive",
-          title: "Failed to update profile",
-          description: "There was a problem with your request.",
-          action: <ToastAction altText="Try again">Try again</ToastAction>,
-        });
+        alert("Failed to update profile.");
       }
     }
     setLoadingProfile(false);
   };
 
-  const handleUpdatePassword = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleChangePassword = async (data: FieldValues) => {
     setLoadingPassword(true);
-    if (newPassword !== confirmPassword) {
-      toast({
-        variant: "destructive",
-        title: "Passwords do not match",
-        description: "Please make sure your passwords match.",
-      });
-      setLoadingPassword(false);
-      return;
-    } else if (newPassword.length < 8) {
-      toast({
-        variant: "destructive",
-        title: "Password too short",
-        description: "Please make sure your password is at least 8 characters long.",
-      });
-      setLoadingPassword(false);
-      return;
-    }
     try {
-      const response = await axiosInstance.post("http://127.0.0.1:8000/api/profile/update-password", {
-        old_password: oldPassword,
-        new_password: newPassword,
-        new_password_confirmation: confirmPassword,
-        force_logout: false,
-      });
+      const response = await axiosInstance.post(
+        "http://127.0.0.1:8000/api/profile/update-password",
+        {
+          old_password: data.old_password,
+          new_password: data.new_password,
+          new_password_confirmation: data.new_password_confirmation,
+          force_logout: false,
+        }
+      );
       if (response) {
-      toast({
-        title: "Password updated",
-        description: "Your password has been updated successfully.",
-        duration: 2000,
-      });
         localStorage.removeItem("access_token");
         router.push("/auth/login");
       }
     } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Failed to update password",
-        description: "There was a problem with your request.",
-        action: <ToastAction altText="Try again">Try again</ToastAction>,
-      });
       console.log(error);
     } finally {
       setLoadingPassword(false);
@@ -110,13 +88,13 @@ const ProfilePage = () => {
         <h1 className="text-2xl font-bold">Profile Settings</h1>
       </div>
       <div className="flex-grow flex w-full max-w-2xl">
-        <div className="grid gap-12 w-full">
+        <div className="grid w-full">
           <div className="space-y-4 flex flex-col h-full">
             <div className="space-y-3">
               <Label htmlFor="name" className="text-2xl font-bold"></Label>
               <div className="flex items-center gap-4">
                 <Avatar className="w-24 h-24">
-                  <AvatarImage src={localUser?.avatar}></AvatarImage>
+                  <AvatarImage src={user?.avatar}></AvatarImage>
                   <AvatarFallback>N</AvatarFallback>
                 </Avatar>
                 <div className="grid space-y-2">
@@ -126,20 +104,29 @@ const ProfilePage = () => {
               </div>
             </div>
             <form
-              className="space-y-6 flex-grow flex flex-col"
-              onSubmit={handleSaveProfile}
+              className="flex-grow flex flex-col"
+              onSubmit={handleSubmit(handleSaveProfile)}
             >
               <div className="flex-grow">
                 <div className="space-y-1">
                   <Label htmlFor="name">Name</Label>
                   <Input
                     id="name"
+                    type="text"
                     placeholder="Enter your name"
-                    value={localUser?.name}
-                    onChange={(e) => {
-                      setLocalUser({ ...localUser, name: e.target.value });
-                    }}
+                    {...register("name", {
+                      required: "This field is required",
+                      pattern: {
+                        value: /^[a-zA-Z\s]*$/,
+                        message: "Invalid name",
+                      },
+                    })}
                   />
+                  {errors.name && (
+                    <span className="text-red-500 text-sm">
+                      {errors.name.message as string}
+                    </span>
+                  )}
                 </div>
                 <div className="space-y-1">
                   <Label htmlFor="email">Email</Label>
@@ -147,14 +134,26 @@ const ProfilePage = () => {
                     id="email"
                     type="email"
                     placeholder="Enter your email"
-                    value={localUser?.email}
-                    onChange={(e) => {
-                      setLocalUser({ ...localUser, email: e.target.value });
-                    }}
+                    {...register("email", {
+                      required: "This field is required",
+                      pattern: {
+                        value: /\S+@\S+\.\S+/,
+                        message: "Invalid email address",
+                      },
+                    })}
                   />
+                  {errors.email && (
+                    <span className="text-red-500 text-sm">
+                      {errors.email.message as string}
+                    </span>
+                  )}
                 </div>
               </div>
-              <Button className="w-full" type="submit" disabled={loadingProfile}>
+              <Button
+                className="w-full"
+                type="submit"
+                disabled={loadingProfile}
+              >
                 {loadingProfile ? (
                   <>
                     <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
@@ -170,8 +169,8 @@ const ProfilePage = () => {
           <div className="flex flex-col h-full">
             <h2 className="text-2xl font-bold mb-6">Change Password</h2>
             <form
-              className="space-y-6 flex-grow flex flex-col"
-              onSubmit={handleUpdatePassword}
+              className="flex-grow flex flex-col"
+              onSubmit={handleSubmitPassword(handleChangePassword)}
             >
               <div className="flex-grow">
                 <div className="space-y-1">
@@ -179,19 +178,34 @@ const ProfilePage = () => {
                   <Input
                     id="old_password"
                     type="password"
-                    value={oldPassword}
-                    onChange={(e) => setOldPassword(e.target.value)}
-                    required
+                    {...registerPassword("old_password", {
+                      required: "Please enter your current password",
+                    })}
                   />
+                  {errorsPassword.old_password && (
+                    <span className="text-red-500 text-sm">
+                      {errorsPassword.old_password.message as string}
+                    </span>
+                  )}
                 </div>
                 <div className="space-y-1">
                   <Label htmlFor="new_password">New Password</Label>
                   <Input
                     id="new_password"
                     type="password"
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
+                    {...registerPassword("new_password", {
+                      required: "Please enter your new password",
+                      minLength: {
+                        value: 8,
+                        message: "Password must be at least 8 characters",
+                      },
+                    })}
                   />
+                  {errorsPassword.new_password && (
+                    <span className="text-red-500 text-sm">
+                      {errorsPassword.new_password.message as string}
+                    </span>
+                  )}
                 </div>
                 <div className="space-y-1">
                   <Label htmlFor="new_password_confirmation">
@@ -200,12 +214,32 @@ const ProfilePage = () => {
                   <Input
                     id="new_password_confirmation"
                     type="password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    {...registerPassword("new_password_confirmation", {
+                      required: "Please confirm your new password",
+                      minLength: {
+                        value: 8,
+                        message: "Password must be at least 8 characters",
+                      },
+                      validate: (value) =>
+                        value === getValues("new_password") ||
+                        "Passwords do not match",
+                    })}
                   />
+                  {errorsPassword.new_password_confirmation && (
+                    <span className="text-red-500 text-sm">
+                      {
+                        errorsPassword.new_password_confirmation
+                          .message as string
+                      }
+                    </span>
+                  )}
                 </div>
               </div>
-              <Button className="w-full" type="submit" disabled={loadingPassword}>
+              <Button
+                className="w-full"
+                type="submit"
+                disabled={loadingPassword}
+              >
                 {loadingPassword ? (
                   <>
                     <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
