@@ -1,23 +1,31 @@
 import React, { useEffect, useState } from "react";
-import { usePathname, redirect } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
-export const AuthChecker = () => {
+export const useAuthChecker = () => {
   const path = usePathname();
-  const [useAuthLayout, setUseAuthLayout] = useState(false);
+  const router = useRouter();
+  const [useAuthLayout, setAuthState] = useState({
+    isAuthenticated: false,
+    useAuthLayout: false,
+  });
   const authRoutesRegex = new RegExp("/auth/(login|logout)");
 
   useEffect(() => {
-    const accessToken = localStorage.getItem("access_token");
-    if (authRoutesRegex.test(path)) {
-      // path = login or logout, the layout wont be used
-      setUseAuthLayout(false);
-    } else {
-      setUseAuthLayout(true);
-      // otherwise, check if the user is authenticated
-      if (accessToken === null || accessToken === undefined) {
-        redirect("/auth/login");
+    const checkAuth = () => {
+      const accessToken = localStorage.getItem("access_token");
+      if (authRoutesRegex.test(path)) {
+        setAuthState({ isAuthenticated: false, useAuthLayout: false });
+      } else {
+        if (accessToken === null || accessToken === undefined) {
+          router.push("/auth/login");
+          setAuthState({ isAuthenticated: false, useAuthLayout: false });
+        } else {
+          setAuthState({ isAuthenticated: true, useAuthLayout: true });
+        }
       }
-    }
+    };
+
+    checkAuth();
   }, [path]);
 
   return useAuthLayout;

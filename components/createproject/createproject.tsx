@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/select";
 import { useRouter } from "next/navigation";
 import { ProjectModel } from "@/model/projectModel";
+import { useUser } from "@/useContext/UserContext";
 
 const CreateProject = () => {
   const router = useRouter();
@@ -32,11 +33,10 @@ const CreateProject = () => {
   const [visibility, setVisibility] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const [status, setStatus] = useState();
+  const { hasPolicy } = useUser();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsOpen(false);
-    console.log("submitting form");
     try {
       const response = await ProjectModel.create({
         name,
@@ -59,6 +59,10 @@ const CreateProject = () => {
     setIsOpen(false);
     console.log("canceling form");
   };
+
+  if (!hasPolicy("project.create")) {
+    return null;
+  }
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>

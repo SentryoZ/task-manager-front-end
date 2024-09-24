@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import {FiHome, FiLogOut, FiUsers} from "react-icons/fi";
+import { FiHome, FiLogOut, FiUsers } from "react-icons/fi";
 import {
   MdOutlineTableChart,
   MdOutlineFormatListNumbered,
@@ -9,17 +9,25 @@ import { IoSettingsOutline } from "react-icons/io5";
 import { FaUserGroup } from "react-icons/fa6";
 import { CgProfile } from "react-icons/cg";
 
+export type SidebarItem = {
+  title: string;
+  href: string;
+  icon: JSX.Element | null;
+  policies?: string[]; // 'policies' is now an optional property
+};
 
 export const SidebarItems = [
   {
     title: "Home",
     href: "/",
     icon: <FiHome size={24} />,
+    policies: [],
   },
   {
     title: "Projects",
     href: "/projects",
     icon: <MdOutlineTableChart size={24} />,
+    policies: ["project.read"],
   },
   {
     title: "Issues",
@@ -40,15 +48,17 @@ export const SidebarItems = [
     title: "Members",
     href: "/members",
     icon: <FiUsers size={24} />,
+    policies: ["user.read"],
   },
   {
     title: "Groups",
     href: "/groups",
     icon: <FaUserGroup size={24} />,
+    policies: ["role.read"],
   },
   {
     title: "Your Profile",
     href: "/profile",
     icon: <CgProfile size={24} />,
-  }
+  },
 ];

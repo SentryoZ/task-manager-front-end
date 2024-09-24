@@ -7,8 +7,6 @@ import { Label } from "@/components/ui/label";
 import { UserModel } from "@/model/userModel";
 import { ReloadIcon } from "@radix-ui/react-icons";
 import { useUser } from "@/useContext/UserContext";
-import { useToast } from "@/components/ui/use-toast";
-import { ToastAction } from "@/components/ui/toast";
 import { axiosInstance } from "@/lib/http";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -18,6 +16,7 @@ const ProfilePage = () => {
   const { user, updateUser } = useUser();
   const [loadingProfile, setLoadingProfile] = useState(false);
   const [loadingPassword, setLoadingPassword] = useState(false);
+  const [preview, setPreview] = useState<string | null>(null);
   const {
     register,
     handleSubmit,
@@ -82,6 +81,23 @@ const ProfilePage = () => {
     }
   };
 
+  const handleAvatarInput = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const validTypes = ['image/jpeg', 'image/png'];
+      if (!validTypes.includes(file.type)) {
+        alert('The avatar field must be a file of type: jpg, png.');
+        return;
+      }
+      setValue('avatar', file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   return (
     <div className="flex flex-col w-full h-full p-4 overflow-auto">
       <div className="flex justify-between items-center mb-4">
@@ -98,7 +114,16 @@ const ProfilePage = () => {
                   <AvatarFallback>N</AvatarFallback>
                 </Avatar>
                 <div className="grid space-y-2">
-                  <Button variant="default">Change Picture</Button>
+                  <input
+                    type="file"
+                    id="avatar"
+                    accept="image/*"
+                    onChange={handleAvatarInput}
+                    style={{ display: 'none' }}
+                  />
+                  <Button variant="default" onClick={() => document.getElementById('avatar')?.click()}>
+                    Change Picture
+                  </Button>
                   <Button variant="outline">Remove Picture</Button>
                 </div>
               </div>

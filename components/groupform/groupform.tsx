@@ -13,11 +13,13 @@ import PolicyConstants from "../../constant/constant";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { axiosInstance } from "@/lib/http";
+import { useUser } from "@/useContext/UserContext";
 
 const GroupEditForm = ({ open, setOpen, fetchData, id, type }) => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [policies, setPolicies] = useState([] as any);
+  const [policies, setPolicies] = useState([] as any | null);
+  const { refreshUser, updatePolicy } = useUser();
 
   useEffect(() => {
     if (open) {
@@ -26,7 +28,7 @@ const GroupEditForm = ({ open, setOpen, fetchData, id, type }) => {
           const response = await axiosInstance.get(`api/${type}/${id}`);
           setName(response.data.data.name);
           setDescription(response.data.data.description);
-          setPolicies(response.data.data.policies);
+          setPolicies(response.data.data.policies || []);
         } catch (error) {
           console.error("Error fetching role details:", error);
         }
@@ -38,9 +40,16 @@ const GroupEditForm = ({ open, setOpen, fetchData, id, type }) => {
 
   const handleSave = async () => {
     try {
-      await RoleModel.patch(id, { name, description, policies });
-      fetchData(); // Refresh the data
-      setOpen(false); // Close the dialog
+      const updatedPolicies = policies.length === 0 ? [] : policies; // If no policies are selected, set it to an empty array
+      await RoleModel.patch(id, {
+        name,
+        description,
+        policies: updatedPolicies,
+      });
+      fetchData();
+      updatePolicy(policies);
+      refreshUser();
+      setOpen(false);
     } catch (error) {
       console.error("Error updating role:", error);
     }
@@ -102,7 +111,9 @@ const GroupEditForm = ({ open, setOpen, fetchData, id, type }) => {
                       <input
                         type="checkbox"
                         checked={policies.includes(PolicyConstants.USER[key])}
-                        onChange={() => handlePolicyChange(PolicyConstants.USER[key])}
+                        onChange={() =>
+                          handlePolicyChange(PolicyConstants.USER[key])
+                        }
                       />
                       {PolicyConstants.USER[key]}
                     </div>
@@ -116,8 +127,12 @@ const GroupEditForm = ({ open, setOpen, fetchData, id, type }) => {
                       <div key={key} className="flex gap-2">
                         <input
                           type="checkbox"
-                          checked={policies.includes(PolicyConstants.PROJECT[key])}
-                          onChange={() => handlePolicyChange(PolicyConstants.PROJECT[key])}
+                          checked={policies.includes(
+                            PolicyConstants.PROJECT[key]
+                          )}
+                          onChange={() =>
+                            handlePolicyChange(PolicyConstants.PROJECT[key])
+                          }
                         />
                         {PolicyConstants.PROJECT[key]}
                       </div>
@@ -132,7 +147,9 @@ const GroupEditForm = ({ open, setOpen, fetchData, id, type }) => {
                       <input
                         type="checkbox"
                         checked={policies.includes(PolicyConstants.ROLE[key])}
-                        onChange={() => handlePolicyChange(PolicyConstants.ROLE[key])}
+                        onChange={() =>
+                          handlePolicyChange(PolicyConstants.ROLE[key])
+                        }
                       />
                       {PolicyConstants.ROLE[key]}
                     </div>

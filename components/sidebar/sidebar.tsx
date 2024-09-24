@@ -7,9 +7,11 @@ import { FiChevronLeft } from "react-icons/fi";
 import { useState } from "react";
 import { FiChevronRight } from "react-icons/fi";
 import { useEffect } from "react";
+import { useUser } from "@/useContext/UserContext";
 
 const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
   const path = usePathname();
+  const { hasPolicy } = useUser();
 
   useEffect(() => {
     const mediaQuery = window.matchMedia("(max-width: 768px)");
@@ -29,6 +31,50 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
     return () => mediaQuery.removeEventListener("change", handleResize);
   }, []);
 
+  const renderSidebarItem = (item, index) => {
+    const hasPolicies =
+      !item.policies ||
+      item.policies.length === 0 ||
+      item.policies.some((policy) => hasPolicy(policy));
+
+    if (!hasPolicies) {
+      return null;
+    }
+
+    if (item.title === "Team Manage") {
+      return (
+        <div key={index} className={`my-2 ${isSidebarOpen ? "px-2" : "px-1"}`}>
+          {isSidebarOpen ? (
+            <div className="text-xs font-semibold text-gray-400 uppercase">
+              {item.title}
+            </div>
+          ) : (
+            <div className="border-t border-gray-300 dark:border-gray-600"></div>
+          )}
+        </div>
+      );
+    }
+
+    return (
+      <Link href={item.href} key={index}>
+        <div
+          className={`flex items-center mb-0.5 ${
+            isSidebarOpen ? "space-x-3" : "w-[40px] h-[40px]"
+          } p-2 rounded-lg cursor-pointer 
+            hover:bg-gray-200 transition-all duration-300 ease-in-out dark:hover:bg-gray-600
+            ${item.href === path ? "bg-gray-200 dark:bg-gray-600" : ""}`}
+        >
+          <div className="flex items-center justify-center overflow-hidden">
+            {item.icon}
+          </div>
+          {isSidebarOpen && (
+            <div className="text-xs md:text-sm">{item.title}</div>
+          )}
+        </div>
+      </Link>
+    );
+  };
+
   return (
     <div
       className={`h-screen flex-col fixed border-r md:flex dark:text-white p-4 transition ease-in-out ${
@@ -45,37 +91,7 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
       )}
 
       <div className="mt-8">
-        {SidebarItems.map((item, index) => {
-          const isTeamManage = item.title === "Team Manage";
-          return (
-            <Link href={item.href} key={index}>
-              <div
-                className={`flex items-center mb-0.5 ${
-                  isSidebarOpen ? "space-x-3" : "w-[40px] h-[40px]"
-                } p-2 rounded-lg ${
-                  isTeamManage ? "space-x-0 cursor-default" : " cursor-pointer"
-                } ${
-                  !isTeamManage
-                    ? "hover:bg-gray-200 transition-all duration-300 ease-in-out dark:hover:bg-gray-600"
-                    : ""
-                } ${item.href === path ? "bg-gray-200 dark:bg-gray-600" : ""}`}
-              >
-                {!isSidebarOpen && isTeamManage ? (
-                  <hr className="border-gray-200 dark:border-gray-600 w-full" />
-                ) : (
-                  <>
-                    <div className="flex items-center justify-center overflow-hidden">
-                      {item.icon}
-                    </div>
-                    {isSidebarOpen && (
-                      <div className="text-xs md:text-sm">{item.title}</div>
-                    )}
-                  </>
-                )}
-              </div>
-            </Link>
-          );
-        })}
+        {SidebarItems.map((item, index) => renderSidebarItem(item, index))}
       </div>
       <div
         className="absolute right-0 -mr-4"

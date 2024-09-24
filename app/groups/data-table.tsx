@@ -20,22 +20,25 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import { getColumns, RoleManagement } from "./columns";
+import { useUser } from "@/useContext/UserContext";
 
-interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
-  data: TData[];
+interface DataTableProps {
+  data: RoleManagement[];
   fetchData: () => void;
 }
 
-export function DataTable<TData, TValue>({
-  columns,
-  data,
-  fetchData,
-}: DataTableProps<TData, TValue>) {
+export function DataTable<TData, TValue>({ data, fetchData }: DataTableProps) {
   const [pagination, setPagination] = useState({
     pageIndex: 0, // initial page index
-    pageSize: 5, // page size
+    pageSize: 7, // page size
   });
+  const { hasPolicy } = useUser();
+
+  const canUpdate = hasPolicy("role.update");
+  const canDelete = hasPolicy("role.delete");
+
+  const columns = getColumns(fetchData, canUpdate, canDelete);
 
   const table = useReactTable({
     data,
@@ -52,9 +55,9 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className="flex flex-col h-full">
-      <div className="flex-grow overflow-auto p-4">
-        <Table className="border-b">
-          <TableHeader className="sticky top-0 border-b bg-white">
+      <div className="flex-grow overflow-auto border rounded-xl">
+        <Table>
+          <TableHeader className="sticky top-0 bg-background z-10">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
@@ -70,7 +73,7 @@ export function DataTable<TData, TValue>({
               </TableRow>
             ))}
           </TableHeader>
-          <TableBody className="flex-grow">
+          <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
@@ -100,7 +103,7 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center justify-center space-x-2 py-10">
+      <div className="flex items-center justify-center space-x-2 mt-5">
         <Button
           variant="outline"
           size="sm"

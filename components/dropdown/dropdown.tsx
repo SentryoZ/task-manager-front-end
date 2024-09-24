@@ -13,10 +13,28 @@ import useOnDelete from "@/hooks/useOnDelete";
 import MemberEditForm from "../memberform/memberform";
 import ProjectEditForm from "../projectform/projectform";
 import GroupEditForm from "../groupform/groupform";
+import { useUser } from "@/useContext/UserContext";
 
-const DropDownButton = ({ type, id, fetchData }) => {
+interface DropDownButtonProps {
+  type: string;
+  id: string | number;
+  fetchData: () => void;
+  canUpdate?: boolean;
+  canDelete?: boolean;
+}
+
+const DropDownButton: React.FC<DropDownButtonProps> = ({
+  type,
+  id,
+  fetchData,
+}) => {
   const [open, setOpen] = useState(false);
   const onDelete = useOnDelete(type, id, fetchData);
+  const { hasPolicy } = useUser();
+
+  const canUpdate = hasPolicy(`${type}.update`);
+  const canDelete = hasPolicy(`${type}.delete`);
+
   return (
     <div>
       <DropdownMenu>
@@ -24,18 +42,22 @@ const DropDownButton = ({ type, id, fetchData }) => {
           <Button variant="outline">...</Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-46 dark:text-white ">
-          <DropdownMenuItem onClick={() => setOpen(true)}>
-            <span className="flex items-center justify-between w-full cursor-pointer ">
-              <span>Edit</span>
-              <CiEdit className="h-4 w-4" />
-            </span>
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={onDelete}>
-            <span className="flex items-center justify-between w-full cursor-pointer ">
-              <span>Delete</span>
-              <MdOutlineDelete className="h-4 w-4" />
-            </span>
-          </DropdownMenuItem>
+          {canUpdate && (
+            <DropdownMenuItem onClick={() => setOpen(true)}>
+              <span className="flex items-center justify-between w-full cursor-pointer ">
+                <span>Edit</span>
+                <CiEdit className="h-4 w-4" />
+              </span>
+            </DropdownMenuItem>
+          )}
+          {canDelete && (
+            <DropdownMenuItem onClick={onDelete}>
+              <span className="flex items-center justify-between w-full cursor-pointer ">
+                <span>Delete</span>
+                <MdOutlineDelete className="h-4 w-4" />
+              </span>
+            </DropdownMenuItem>
+          )}
         </DropdownMenuContent>
       </DropdownMenu>
       {type === "user" ? (

@@ -10,7 +10,12 @@ export type RoleManagement = {
   description: string;
 };
 
-export const getColumns = (fetchData: () => void): ColumnDef<RoleManagement>[] => [  {
+export const getColumns = (
+  fetchData: () => void,
+  canUpdate: boolean,
+  canDelete: boolean
+): ColumnDef<RoleManagement>[] => [
+  {
     id: "name",
     accessorKey: "name",
     header: "Name",
@@ -28,15 +33,19 @@ export const getColumns = (fetchData: () => void): ColumnDef<RoleManagement>[] =
   {
     id: "actions",
     accessorKey: "id",
-    header: "Actions",
+    header: "",
     cell: (info) => {
       return (
-        <div className="flex justify-center space-x-2">
-          <DropDownButton
-            type="role"
-            id={info.row.original.id}
-            fetchData={fetchData}
-          />
+        <div className="text-right">
+          {(canUpdate || canDelete) && (
+            <DropDownButton
+              type="role"
+              id={info.row.original.id}
+              fetchData={fetchData}
+              canUpdate={canUpdate}
+              canDelete={canDelete}
+            />
+          )}
         </div>
       );
     },

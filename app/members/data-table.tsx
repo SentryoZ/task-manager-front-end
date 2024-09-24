@@ -7,6 +7,7 @@ import {
   useReactTable,
   getFilteredRowModel,
   ColumnFiltersState,
+  getPaginationRowModel,
 } from "@tanstack/react-table";
 
 import {
@@ -17,88 +18,45 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import DropDownButton from "@/components/dropdown/dropdown";
+import { getColumns, User } from "./columns";
+import { useUser } from "@/useContext/UserContext";
+import { Button } from "@/components/ui/button";
+import LoadingPage from "@/app/loading";
 
-export interface User {
-  id: number;
-  name: string;
-  email: string | null; // 'email' can be null
-  status: number;
-  role: number;
-}
-
-
-interface DataTableProps<TData extends {id : any}, TValue> {
-  data: TData[];
+interface DataTableProps {
+  data: User[];
   filter: string;
   fetchData: () => void;
+  isLoading: boolean;
 }
 
 export function DataTable<TData extends { id: any }, TValue>({
   data,
   filter,
   fetchData,
-}: DataTableProps<TData, TValue>) {
+  isLoading,
+}: DataTableProps) {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const { hasPolicy } = useUser();
 
-  const columns: ColumnDef<TData>[] = [
-    {
-      accessorKey: "avatar",
-      header: "Avatar",
-      cell: (info) => (
-        <img
-          src={info.getValue() as string}
-          alt="avatar"
-          style={{
-            width: 50,
-            height: 50,
-            borderRadius: "50%",
-            objectFit: "cover",
-          }}
-        />
-      ),
-    },
-    {
-      accessorKey: "id",
-      header: "ID",
-    },
-    {
-      accessorKey: "name",
-      header: "Name",
-    },
-    {
-      accessorKey: "email",
-      header: "Email",
-    },
-    {
-      accessorKey: "status_label",
-      header: "Status",
-    },
-    {
-      accessorKey: "role_name",
-      header: "Role",
-    },
-    {
-      id: "actions",
-      header: "",
-      cell: (info) => (
-        <div className="text-right pr-4">
-          <DropDownButton
-            type="user"
-            id={info.row.original.id}
-            fetchData={fetchData}
-          />
-        </div>
-      ),
-    },
-  ];
+  const canUpdate = hasPolicy("user.update");
+  const canDelete = hasPolicy("user.delete");
+
+  const columns = getColumns(fetchData, canUpdate, canDelete);
 
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
     onColumnFiltersChange: setColumnFilters,
+    getPaginationRowModel: getPaginationRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
+    initialState: {
+      pagination: {
+        pageIndex: 0,
+        pageSize: 7,
+      },
+    },
     state: {
       globalFilter: filter,
       columnFilters,
@@ -106,49 +64,75 @@ export function DataTable<TData extends { id: any }, TValue>({
   });
 
   return (
-    <div className="rounded-md border w-full h-full">
-      <Table>
-        <TableHeader>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id}>
-              {headerGroup.headers.map((header) => {
-                return (
-                  <TableHead key={header.id}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                  </TableHead>
-                );
-              })}
-            </TableRow>
-          ))}
-        </TableHeader>
-        <TableBody className="border-b">
-          {table.getRowModel().rows?.length ? (
-            table.getRowModel().rows.map((row) => (
-              <TableRow
-                key={row.id}
-                data-state={row.getIsSelected() && "selected"}
-              >
-                {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </TableCell>
-                ))}
+    <div className="flex flex-col h-full">
+      <div className="flex-grow overflow-auto border rounded-xl">
+        <Table>
+          <TableHeader className="sticky top-0 bg-background z-10">
+            {table.getHeaderGroups().map((headerGroup) => (
+              <TableRow key={headerGroup.id}>
+                {headerGroup.headers.map((header) => {
+                  return (
+                    <TableHead key={header.id}>
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                    </TableHead>
+                  );
+                })}
               </TableRow>
-            ))
-          ) : (
-            <TableRow>
-              <TableCell colSpan={columns.length} className="h-24 text-center">
-                No results.
-              </TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
+            ))}
+          </TableHeader>
+          <TableBody>
+            {table.getRowModel().rows?.length ? (
+              table.getRowModel().rows.map((row) => (
+                <TableRow
+                  key={row.id}
+                  data-state={row.getIsSelected() && "selected"}
+                >
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id}>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center"
+                >
+                  {isLoading ? <LoadingPage /> : "No results."}
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </div>
+      <div className="flex items-center justify-center space-x-2 mt-5">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => table.previousPage()}
+          disabled={!table.getCanPreviousPage()}
+        >
+          Previous
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => table.nextPage()}
+          disabled={!table.getCanNextPage()}
+        >
+          Next
+        </Button>
+      </div>
     </div>
   );
 }

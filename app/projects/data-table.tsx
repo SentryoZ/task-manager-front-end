@@ -11,6 +11,8 @@ import {
   ColumnFiltersState,
   getFilteredRowModel,
 } from "@tanstack/react-table";
+import { getColumns } from "./columns";
+import { useUser } from "@/useContext/UserContext";
 
 interface DataTableProps<TData> {
   data: TData[];
@@ -27,39 +29,18 @@ export default function DataTable<TData>({
     []
   );
 
+  const { hasPolicy } = useUser();
+
   useEffect(() => {
     // only use it when filter changes otherwise it will cause "Too many re-renders"
     setColumnFilters([{ id: "name-description", value: filter }]);
     setPagination((prev) => ({ ...prev, pageIndex: 0 })); // reset on search
   }, [filter]);
 
-  const columns: ColumnDef<any>[] = [
-    {
-      accessorFn: (row) => `${row.name}\n${row.description}`, // combine name and description for filtering
-      id: "name-description", // id for filtering
-      header: "Project Details",
-      // render name and description in separate lines
-      cell: (info) => (
-        <div>
-          <div className="font-medium">{info.row.original.name}</div>
-          <div className="text-sm">{info.row.original.description}</div>
-        </div>
-      ),
-    },
-    {
-      id: "actions",
-      header: "",
-      cell: (info) => (
-        <div className="text-right pr-4">
-          <DropDownButton
-            type="project"
-            id={info.row.original.id}
-            fetchData={fetchData}
-          />
-        </div>
-      ),
-    },
-  ];
+  const canUpdate = hasPolicy("project.update");
+  const canDelete = hasPolicy("project.delete");
+
+  const columns = getColumns(fetchData, canUpdate, canDelete);
 
   const [pagination, setPagination] = useState({
     pageIndex: 0, // initial page index
@@ -83,9 +64,9 @@ export default function DataTable<TData>({
 
   return (
     <div className="flex flex-col h-full">
-      <div className="flex flex-col flex-grow overflow-auto p-4">
+      <div className="flex flex-col flex-grow overflow-auto border rounded-xl">
         <Table className="h-full">
-          <TableBody className="border-b">
+          <TableBody>
             {table.getRowModel().rows.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow key={row.id}>
@@ -109,7 +90,7 @@ export default function DataTable<TData>({
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center justify-center space-x-2 py-10">
+      <div className="flex items-center justify-center space-x-2 mt-5">
         <Button
           variant="outline"
           size="sm"
