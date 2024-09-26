@@ -20,7 +20,7 @@ interface Project {
 const ProjectsPage = () => {
   const [projects, setProjects] = useState<Project[]>([]);
   const [filter, setFilter] = useState("");
-  const { hasPolicy } = useUser();
+  const { hasPolicy, user } = useUser();
 
   const fetchProject = async () => {
     try {

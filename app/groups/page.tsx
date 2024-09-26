@@ -5,7 +5,6 @@ import { Input } from "@/components/ui/input";
 import AddRole from "./addrole";
 import { RoleModel } from "@/model/roleModel";
 import { useEffect } from "react";
-import { getColumns } from "./columns";
 import { useUser } from "@/useContext/UserContext";
 import NoPermissionPage from "../nopermission";
 interface RoleManagement {
