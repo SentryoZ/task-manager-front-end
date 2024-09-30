@@ -14,7 +14,7 @@ const Navbar = () => {
     <nav className="flex p-5 text-black h-[66px] border-b dark:text-white ">
       <div className="flex items-center space-x-3  ml-auto">
         <div>
-          <ThemeToggle />
+          <ThemeToggle variant={"outline"} />
         </div>
 
         {NavbarItem.map((item, index) => (

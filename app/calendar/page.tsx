@@ -1,14 +1,10 @@
 "use client";
 import React from "react";
-import { MdOutlineEvent } from "react-icons/md";
-import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import FullCalendar from "@fullcalendar/react";
-import dayGridPlugin from "@fullcalendar/daygrid"; // a plugin!
-import timeGridPlugin from "@fullcalendar/timegrid";
 import DayView from "./dayview";
 import WeekView from "./weekview";
 import MonthView from "./monthview";
+import AddTask from "./addtask";
 
 export default function Page() {
   const [activeTab, setActiveTab] = useState("Day");
@@ -55,12 +51,7 @@ export default function Page() {
               </button>
             </div>
           </div>
-          <div>
-            <Button variant="outline" className="font-semibold">
-              <MdOutlineEvent size={20} className="mr-2" />
-              Add Event
-            </Button>
-          </div>
+          <AddTask />
         </div>
         <div className="flex-grow flex overflow-hidden p-4">
           <div className="w-full">

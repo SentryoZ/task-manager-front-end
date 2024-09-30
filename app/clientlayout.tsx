@@ -40,20 +40,25 @@ export default function ClientLayout({
     return <LoadingPage />;
   }
 
-  return useAuthLayout ? (
-    <div className="flex">
-      <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-        <Sidebar
-          isSidebarOpen={isSidebarOpen} // pass isSidebarOpen state
-          setIsSidebarOpen={setIsSidebarOpen} // pass setIsSidebarOpen function
-        />
-        <PageWrapper isSidebarOpen={isSidebarOpen}>
-          <Navbar />
-          <ContentWrapper>{children}</ContentWrapper>
-        </PageWrapper>
-      </ThemeProvider>
-    </div>
-  ) : (
-    children
+  const path = usePathname();
+  const isLandingPage = path === "/";
+
+  return (
+    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+      {isAuthenticated && useAuthLayout && !isLandingPage ? (
+        <div className="flex">
+          <Sidebar
+            isSidebarOpen={isSidebarOpen}
+            setIsSidebarOpen={setIsSidebarOpen}
+          />
+          <PageWrapper isSidebarOpen={isSidebarOpen}>
+            <Navbar />
+            <ContentWrapper>{children}</ContentWrapper>
+          </PageWrapper>
+        </div>
+      ) : (
+        <>{children}</>
+      )}
+    </ThemeProvider>
   );
 }

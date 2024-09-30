@@ -10,7 +10,7 @@ function NotFound() {
       <p>
         Please go back to the{" "}
         <Link
-          href="/"
+          href="/homepage"
           className="underline hover:text-blue-500 hover: transition duration-300 ease-in-out"
         >
           HomePage

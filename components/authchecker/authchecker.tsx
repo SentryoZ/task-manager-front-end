@@ -17,10 +17,14 @@ export const useAuthChecker = () => {
         setAuthState({ isAuthenticated: false, useAuthLayout: false });
       } else {
         if (accessToken === null || accessToken === undefined) {
-          router.push("/auth/login");
+          router.push("/");
           setAuthState({ isAuthenticated: false, useAuthLayout: false });
         } else {
-          setAuthState({ isAuthenticated: true, useAuthLayout: true });
+          if (accessToken) {
+            setAuthState({ isAuthenticated: true, useAuthLayout: true });
+          } else {
+            setAuthState({ isAuthenticated: false, useAuthLayout: false });
+          }
         }
       }
     };

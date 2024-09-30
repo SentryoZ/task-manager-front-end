@@ -56,7 +56,6 @@ const CreateProject = () => {
 
   const handleCancel = () => {
     setIsOpen(false);
-    console.log("canceling form");
   };
 
   if (!hasPolicy("project.create")) {
@@ -111,6 +110,15 @@ const CreateProject = () => {
                   </SelectGroup>
                 </SelectContent>
               </Select>
+            </div>
+            <div className="flex flex-col space-y-1.5">
+              <label
+                htmlFor="dueDate"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Due Date
+              </label>
+              <Input id="dueDate" type="date" />
             </div>
             <DialogFooter className="flex">
               <Button type="submit">Submit</Button>

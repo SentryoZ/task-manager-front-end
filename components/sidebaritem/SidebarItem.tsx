@@ -19,7 +19,7 @@ export type SidebarItem = {
 export const SidebarItems = [
   {
     title: "Home",
-    href: "/",
+    href: "/homepage",
     icon: <FiHome size={24} />,
     policies: [],
   },
