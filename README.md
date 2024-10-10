@@ -22,7 +22,7 @@ To access the site, use the pre-existing demo credentials:
 ---
 
 ## Contact 👨‍💻
-- Let me know if there is any bug or error. Thanks.
+- Let me know if there are any bugs or errors. Thanks.
 
 ---
 
