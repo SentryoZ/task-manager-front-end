@@ -1,7 +1,5 @@
 # Welcome to [Task.manager](https://www.hostcrafted.online/) 🌐
 
----
-
 ## Getting Started 🚀
 
 ### Step 1: Visit the Website
